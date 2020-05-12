@@ -147,6 +147,27 @@ open class CenteredCollectionViewFlowLayout: UICollectionViewFlowLayout {
         }
         collectionView.setContentOffset(proposedContentOffset, animated: shouldAnimate)
     }
+    
+    public func scrollToDinamicPage(index: Int, animated: Bool, pageWidth: CGFloat) {
+        guard let collectionView = collectionView else { return }
+        
+        let proposedContentOffset: CGPoint
+        let shouldAnimate: Bool
+        switch scrollDirection {
+        case .horizontal:
+            let pageOffset = CGFloat(index) * pageWidth - collectionView.contentInset.left
+            proposedContentOffset = CGPoint(x: pageOffset, y: collectionView.contentOffset.y)
+            shouldAnimate = abs(collectionView.contentOffset.x - pageOffset) > 1 ? animated : false
+        case .vertical:
+            let pageOffset = CGFloat(index) * pageWidth - collectionView.contentInset.top
+            proposedContentOffset = CGPoint(x: collectionView.contentOffset.x, y: pageOffset)
+            shouldAnimate = abs(collectionView.contentOffset.y - pageOffset) > 1 ? animated : false
+        default:
+            proposedContentOffset = .zero
+            shouldAnimate = false
+        }
+        collectionView.setContentOffset(proposedContentOffset, animated: shouldAnimate)
+    }
 }
 
 private extension CenteredCollectionViewFlowLayout {
